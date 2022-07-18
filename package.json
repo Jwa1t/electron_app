@@ -1,0 +1,22 @@
+{
+  "name": "electron_app",
+  "version": "1.0.0",
+  "description": "electron test app",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Jwa1t/electron_app.git"
+  },
+  "author": "Jack Walton",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/Jwa1t/electron_app/issues"
+  },
+  "homepage": "https://github.com/Jwa1t/electron_app#readme",
+  "devDependencies": {
+    "electron": "^19.0.8"
+  }
+}

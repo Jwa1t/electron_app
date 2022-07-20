@@ -1,4 +1,4 @@
-const {app, BrowserWindow, ipcMain, dialog} = require('electron');
+const {app, BrowserWindow, ipcMain, dialog, Menu} = require('electron');
 const path = require('path');
 
 // Example function for renderer to main (one-way)
@@ -24,12 +24,35 @@ function createWindow () {
       preload: path.join(__dirname, 'preload.js')
     }
   })
+
+  const menu = Menu.buildFromTemplate([
+    {
+      label: app.name,
+      submenu: [
+        {
+          click: () => mainWindow.webContents.send('update-counter', 1),
+          label: 'Increment'
+        },
+        {
+          click: () => mainWindow.webContents.send('update-counter', -1),
+          label: 'Decrement'
+        }
+      ]
+    }
+  ])
+  Menu.setApplicationMenu(menu);
   mainWindow.loadFile('index.html');
 }
+
+
 
 app.whenReady().then(() => {
   ipcMain.on('set-title', handleSetTitle);
   ipcMain.handle('dialog:openFile', handleFileOpen);
+  // Handles reply from renderer for main to renderer (two-way)
+  ipcMain.on('counter-value', (event, value) => {
+    console.log(value);
+  });
   createWindow();
   
   app.on('activate', function () {

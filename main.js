@@ -1,5 +1,22 @@
-const {app, BrowserWindow, ipcMain} = require('electron')
-const path = require('path')
+const {app, BrowserWindow, ipcMain, dialog} = require('electron');
+const path = require('path');
+
+// Example function for renderer to main (one-way)
+function handleSetTitle (event, title) {
+  const webContents = event.sender;
+  const win = BrowserWindow.fromWebContents(webContents);
+  win.setTitle(title);
+}
+
+// Example function for renderer to main (two-way)
+async function handleFileOpen() {
+  const { canceled, filePaths } = await dialog.showOpenDialog();
+  if (canceled) {
+    return;
+  } else {
+    return filePaths[0];
+  }
+}
 
 function createWindow () {
   const mainWindow = new BrowserWindow({
@@ -7,24 +24,19 @@ function createWindow () {
       preload: path.join(__dirname, 'preload.js')
     }
   })
-
-  ipcMain.on('set-title', (event, title) => {
-    const webContents = event.sender
-    const win = BrowserWindow.fromWebContents(webContents)
-    win.setTitle(title)
-  })
-
-  mainWindow.loadFile('index.html')
+  mainWindow.loadFile('index.html');
 }
 
 app.whenReady().then(() => {
-  createWindow()
+  ipcMain.on('set-title', handleSetTitle);
+  ipcMain.handle('dialog:openFile', handleFileOpen);
+  createWindow();
   
   app.on('activate', function () {
-    if (BrowserWindow.getAllWindows().length === 0) createWindow()
+    if (BrowserWindow.getAllWindows().length === 0) createWindow();
   })
 })
 
 app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') app.quit()
+  if (process.platform !== 'darwin') app.quit();
 })

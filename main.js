@@ -18,6 +18,10 @@ async function handleFileOpen() {
   }
 }
 
+function handleQuit () {
+  app.quit();
+}
+
 function createWindow () {
   const mainWindow = new BrowserWindow({
     webPreferences: {
@@ -36,6 +40,11 @@ function createWindow () {
         {
           click: () => mainWindow.webContents.send('update-counter', -1),
           label: 'Decrement'
+        },
+        {
+          role: 'Quit',
+          accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Ctrl+Q',
+          click: () => { app.quit() }
         }
       ]
     }
@@ -49,10 +58,12 @@ function createWindow () {
 app.whenReady().then(() => {
   ipcMain.on('set-title', handleSetTitle);
   ipcMain.handle('dialog:openFile', handleFileOpen);
+  ipcMain.on('app-quit', handleQuit);
   // Handles reply from renderer for main to renderer (two-way)
   ipcMain.on('counter-value', (event, value) => {
     console.log(value);
   });
+
   createWindow();
   
   app.on('activate', function () {

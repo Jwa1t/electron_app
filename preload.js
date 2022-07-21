@@ -9,5 +9,6 @@ contextBridge.exposeInMainWorld('versions', {
 contextBridge.exposeInMainWorld('electronAPI', {
   setTitle: (title) => ipcRenderer.send('set-title', title),
   openFile: () => ipcRenderer.invoke('dialog:openFile'),
-  onUpdateCounter: (callback) => ipcRenderer.on('update-counter', callback)
+  onUpdateCounter: (callback) => ipcRenderer.on('update-counter', callback),
+  quitApp: () => ipcRenderer.send('app-quit')
 });

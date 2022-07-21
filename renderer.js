@@ -27,3 +27,8 @@ window.electronAPI.onUpdateCounter((event, value) => {
     event.sender.send('counter-value', newValue);
 });
 
+// Button listener for quitting app
+const setButton2 = document.getElementById('btn2');
+setButton2.addEventListener('click', () => {
+    window.electronAPI.quitApp();
+});
